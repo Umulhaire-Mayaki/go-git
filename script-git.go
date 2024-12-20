@@ -6,11 +6,20 @@ import (
 	"os"
 
 	git "github.com/go-git/go-git/v5"
-	gitlab "https://gitlab.cee.redhat.com/umayaki/clusterimagesets"
+	gitlab "github.com/xanzy/go-gitlab"
 )
 
 func main() {
-	// Step 1: Clone the repository or open an existing one
+	// GitLab Project Details
+	projectNamespace := "Umulhaire Mayaki" // Replace with your GitLab namespace
+	projectName := "clusterimagesets"           // Replace with your repository name
+	sourceBranch := "feature/mr-automation-changes"     // Replace with your source branch name
+	targetBranch := "master"               // Replace with your target branch
+	commitMessage := "Automated commit message"
+	mergeRequestTitle := "Automated Merge Request"
+	mergeRequestDescription := "This MR was created automatically."
+
+	// Step 1: Clone or open the repository
 	repo, err := git.PlainOpen(".")
 	if err != nil {
 		log.Fatalf("Failed to open repo: %v", err)
@@ -28,10 +37,11 @@ func main() {
 	}
 
 	// Step 3: Commit the changes
-	commit, err := worktree.Commit("Automated commit message", &git.CommitOptions{})
+	commit, err := worktree.Commit(commitMessage, &git.CommitOptions{})
 	if err != nil {
 		log.Fatalf("Failed to commit changes: %v", err)
 	}
+	fmt.Printf("Commit created: %s\n", commit.String())
 
 	// Step 4: Push the changes to remote
 	err = repo.Push(&git.PushOptions{})
@@ -41,17 +51,22 @@ func main() {
 	fmt.Println("Changes pushed successfully.")
 
 	// Step 5: Create a Merge Request using GitLab API
-	token := os.Getenv("GITLAB_TOKEN")
+	token := os.Getenv("GITLAB_TOKEN") // Ensure your GitLab token is set as an environment variable
+	if token == "" {
+		log.Fatalf("GITLAB_TOKEN environment variable is not set")
+	}
+
 	gitlabClient, err := gitlab.NewClient(token)
 	if err != nil {
 		log.Fatalf("Failed to create GitLab client: %v", err)
 	}
 
-	mergeRequest, _, err := gitlabClient.MergeRequests.CreateMergeRequest("your-namespace/your-repo", &gitlab.CreateMergeRequestOptions{
-		Title:        gitlab.String("Automated MR"),
-		SourceBranch: gitlab.String("your-branch"),
-		TargetBranch: gitlab.String("main"),
-		Description:  gitlab.String("This MR was created automatically."),
+	projectID := fmt.Sprintf("%s/%s", projectNamespace, projectName)
+	mergeRequest, _, err := gitlabClient.MergeRequests.CreateMergeRequest(projectID, &gitlab.CreateMergeRequestOptions{
+		Title:        gitlab.String(mergeRequestTitle),
+		SourceBranch: gitlab.String(sourceBranch),
+		TargetBranch: gitlab.String(targetBranch),
+		Description:  gitlab.String(mergeRequestDescription),
 	})
 	if err != nil {
 		log.Fatalf("Failed to create MR: %v", err)
@@ -59,4 +74,3 @@ func main() {
 
 	fmt.Printf("Merge Request created: %s\n", mergeRequest.WebURL)
 }
-
