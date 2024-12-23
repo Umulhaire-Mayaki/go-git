@@ -6,12 +6,13 @@ import (
 	"os"
 
 	git "github.com/go-git/go-git/v5"
-	gitlab "github.com/xanzy/go-gitlab"
+	//gitlab "github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 )
 
 func main() {
 	// GitLab Project Details
-	projectNamespace := "Umulhaire Mayaki" // Replace with your GitLab namespace
+	projectNamespace := "umayaki" // Replace with your GitLab namespace
 	projectName := "clusterimagesets"           // Replace with your repository name
 	sourceBranch := "feature/mr-automation-changes"     // Replace with your source branch name
 	targetBranch := "master"               // Replace with your target branch
@@ -51,7 +52,7 @@ func main() {
 	fmt.Println("Changes pushed successfully.")
 
 	// Step 5: Create a Merge Request using GitLab API
-	token := os.Getenv("GITLAB_TOKEN") // Ensure your GitLab token is set as an environment variable
+	token := os.Getenv("6-9yBqwxdN75XfBvconw") // Ensure your GitLab token is set as an environment variable
 	if token == "" {
 		log.Fatalf("GITLAB_TOKEN environment variable is not set")
 	}
