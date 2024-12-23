@@ -5,17 +5,17 @@ import (
 	"log"
 	"os"
 
-	git "github.com/go-git/go-git/v5"
+
 	//gitlab "github.com/xanzy/go-gitlab"
 	gitlab "gitlab.com/gitlab-org/api/client-go"
 )
 
 func main() {
 	// GitLab Project Details
-	projectNamespace := "umayaki" // Replace with your GitLab namespace
-	projectName := "clusterimagesets"           // Replace with your repository name
-	sourceBranch := "feature/mr-automation-changes"     // Replace with your source branch name
-	targetBranch := "master"               // Replace with your target branch
+	projectNamespace := "umayaki" 
+	projectName := "clusterimagesets"          
+	sourceBranch := "feature/mr-automation-changes"   
+	targetBranch := "master"             
 	commitMessage := "Automated commit message"
 	mergeRequestTitle := "Automated Merge Request"
 	mergeRequestDescription := "This MR was created automatically."
